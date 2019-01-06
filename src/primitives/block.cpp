@@ -10,6 +10,10 @@
 #include "utilstrencodings.h"
 #include "crypto/common.h"
 
+extern "C"{
+#include "crypto/rainforest/rainforest.h"
+}   
+
 uint256 CBlockHeader::GetHash() const
 {
     //return SerializeHash(*this);
@@ -17,7 +21,7 @@ uint256 CBlockHeader::GetHash() const
     // hash _len_ bytes from _in_ into _out_
     //rf256_hash(void *out, const void *in, size_t len) 
     // ASSUME 80 bytes
-    rf256_hash(BEGIN(thash), BEGIN(nVersion), 80)
+    rf256_hash(BEGIN(thash), BEGIN(nVersion), 80);
 
     return thash;
 }
