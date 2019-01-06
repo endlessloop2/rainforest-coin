@@ -12,7 +12,14 @@
 
 uint256 CBlockHeader::GetHash() const
 {
-    return SerializeHash(*this);
+    //return SerializeHash(*this);
+    uint256 thash;
+    // hash _len_ bytes from _in_ into _out_
+    //rf256_hash(void *out, const void *in, size_t len) 
+    // ASSUME 80 bytes
+    rf256_hash(BEGIN(thash), BEGIN(nVersion), 80)
+
+    return thash;
 }
 
 std::string CBlock::ToString() const
