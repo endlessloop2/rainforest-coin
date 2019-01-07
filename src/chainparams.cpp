@@ -115,7 +115,7 @@ public:
 
         if(false)
         {
-            printf("Searching for mainnet genesis block...\n");
+            LogPrintf("Searching for mainnet genesis block...\n");
             bool fNegative;
             bool fOverflow;
             arith_uint256 bnTarget;
@@ -130,21 +130,21 @@ public:
                     break;
                 if ((genesis.nNonce & 0xFFFFF) == 0)
                 {
-                    printf("nonce %08X: PoWhash = %s (target = %s)\n", genesis.nNonce, thash.ToString().c_str(), bnTarget.ToString().c_str());
+                    LogPrintf("nonce %08X: PoWhash = %s (target = %s)\n", genesis.nNonce, thash.ToString().c_str(), bnTarget.ToString().c_str());
                 }
                 ++genesis.nNonce;
                 if (genesis.nNonce == 0)
                 {
-                    printf("NONCE WRAPPED, incrementing time\n");
+                    LogPrintf("NONCE WRAPPED, incrementing time\n");
                     ++genesis.nTime;
                 }
             }
 
-            printf("genesis.nTime = %u \n", genesis.nTime);
-            printf("genesis.nNonce = %u \n", genesis.nNonce);
-            printf("genesis.GetHash = %s\n", genesis.GetHash().ToString().c_str());
+            LogPrintf("genesis.nTime = %u \n", genesis.nTime);
+            LogPrintf("genesis.nNonce = %u \n", genesis.nNonce);
+            LogPrintf("genesis.GetHash = %s\n", genesis.GetHash().ToString().c_str());
             //printf("genesis.GetPoWHash = %s\n", genesis.GetPoWHash().ToString().c_str());
-            printf("genesis.hashMerkleRoot = %s\n", BlockMerkleRoot(genesis).ToString().c_str());
+            LogPrintf("genesis.hashMerkleRoot = %s\n", BlockMerkleRoot(genesis).ToString().c_str());
         }
 
 
