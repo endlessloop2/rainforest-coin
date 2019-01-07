@@ -263,8 +263,8 @@ crypto_libbitcoin_crypto_a_SOURCES = \
   crypto/sha512.cpp \
   crypto/sha512.h \
   crypto/rainforest/rainforest.c \
-  crypto/rainforest/rainforest.h #\
- ##crypto/rainforest/aes2r.c
+  crypto/rainforest/rainforest.h
+  #crypto/rainforest/aes2r.c
 
 # common: shared between bitcoind, and bitcoin-qt and non-server tools
 libbitcoin_common_a_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES)
