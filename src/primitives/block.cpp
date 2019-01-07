@@ -10,9 +10,9 @@
 #include "utilstrencodings.h"
 #include "crypto/common.h"
 
-//extern "C"{
+extern "C"{
 #include "crypto/rainforest/rainforest.h"
-//}   
+}   
 
 uint256 CBlockHeader::GetHash() const
 {

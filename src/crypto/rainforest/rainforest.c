@@ -37,6 +37,7 @@
 #include <unistd.h>
 #include "rainforest.h"
 
+
 // from aes2r.c
 void aes2r_encrypt(uint8_t * state, uint8_t * key);
 
@@ -645,3 +646,4 @@ int main(int argc, char **argv) {
   exit(0);
 }
 #endif
+

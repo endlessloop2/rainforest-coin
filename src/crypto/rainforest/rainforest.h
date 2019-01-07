@@ -34,6 +34,10 @@
 #ifndef RAINFOREST
 #define RAINFOREST
 
+#ifdef __cplusplus
+extern "C"{
+#endif
+
 #include <stdint.h>
 
 // this seems necessary only for gcc, otherwise hash is bogus
@@ -67,4 +71,11 @@ void rf256_final(void *out, rf256_ctx_t *ctx);
 void rf256_hash(void *out, const void *in, size_t len);
 void rf256_hash2(void *out, const void *in, size_t len, uint32_t seed);
 
+#ifdef __cplusplus
+}
 #endif
+
+
+#endif
+
+
