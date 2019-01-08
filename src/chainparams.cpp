@@ -17,6 +17,7 @@
 #include "chainparamsseeds.h"
 
 #include <arith_uint256.h>
+#include <stdio.h>
 
 
 static CBlock CreateGenesisBlock(const char* pszTimestamp, const CScript& genesisOutputScript, uint32_t nTime, uint32_t nNonce, uint32_t nBits, int32_t nVersion, const CAmount& genesisReward)
@@ -53,7 +54,7 @@ static CBlock CreateGenesisBlock(const char* pszTimestamp, const CScript& genesi
  */
 static CBlock CreateGenesisBlock(uint32_t nTime, uint32_t nNonce, uint32_t nBits, int32_t nVersion, const CAmount& genesisReward)
 {
-    const char* pszTimestamp = "Forbes 06/01/2018 A new algorithm was found";
+    const char* pszTimestamp = "Forbes 07/01/2018 A new algorithm was found";
     const CScript genesisOutputScript = CScript() << ParseHex("04678afdb0fe5548271967f1a67130b7105cd6a828e03909a67962e0ea1f61deb649f6bc3f4cef38c4f35504e51ec112de5c384df7ba0b8d578a4c702b6bf11d5f") << OP_CHECKSIG;
     // you have to change genesisOutputScript but I forgot how to 
     return CreateGenesisBlock(pszTimestamp, genesisOutputScript, nTime, nNonce, nBits, nVersion, genesisReward);
@@ -80,7 +81,7 @@ public:
         consensus.nMajorityWindow = 1000;
         consensus.BIP34Height = 0;
         consensus.BIP34Hash = uint256S("0x00"); // change to genesis block
-        consensus.powLimit = uint256S("00000000ffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
+        consensus.powLimit = uint256S("00000fffffffffffffffffffffffffffffffffffffffffffffffffffffffffff");//uint256S("00000000ffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
         consensus.nPowTargetTimespan = 1 * 24 * 60 * 60; // 1 day retarget
         consensus.nPowTargetSpacing = 2 * 60;
         consensus.fPowAllowMinDifficultyBlocks = false;
@@ -111,11 +112,11 @@ public:
         nPruneAfterHeight = 100000;
 
         // CreateGenesisBlock(timestamp, nNonce, nBits, int32_t nVersion, const CAmount& genesisReward)
-        genesis = CreateGenesisBlock(1231006505, 2083236893, 0x1d00ffff, 1, 50 * COIN);
-
+        genesis = CreateGenesisBlock(1546913059, 2083482341/*2083236893*/, 0x1e0ffff0/*0x1d00ffff*/, 1, 50 * COIN);
+		//std::cout << "antes del if" << std::endl;
         if(false)
         {
-            LogPrintf("Searching for mainnet genesis block...\n");
+            std::cout << "Searching for mainnet genesis block...\n";
             bool fNegative;
             bool fOverflow;
             arith_uint256 bnTarget;
@@ -130,28 +131,28 @@ public:
                     break;
                 if ((genesis.nNonce & 0xFFFFF) == 0)
                 {
-                    LogPrintf("nonce %08X: PoWhash = %s (target = %s)\n", genesis.nNonce, thash.ToString().c_str(), bnTarget.ToString().c_str());
+                    printf("nonce %08X: PoWhash = %s (target = %s)\n", genesis.nNonce, thash.ToString().c_str(), bnTarget.ToString().c_str());
                 }
                 ++genesis.nNonce;
                 if (genesis.nNonce == 0)
                 {
-                    LogPrintf("NONCE WRAPPED, incrementing time\n");
+                    printf("NONCE WRAPPED, incrementing time\n");
                     ++genesis.nTime;
                 }
             }
 
-            LogPrintf("genesis.nTime = %u \n", genesis.nTime);
-            LogPrintf("genesis.nNonce = %u \n", genesis.nNonce);
-            LogPrintf("genesis.GetHash = %s\n", genesis.GetHash().ToString().c_str());
+            printf("genesis.nTime = %u \n", genesis.nTime);
+            printf("genesis.nNonce = %u \n", genesis.nNonce);
+            printf("genesis.GetHash = %s\n", genesis.GetHash().ToString().c_str());
             //printf("genesis.GetPoWHash = %s\n", genesis.GetPoWHash().ToString().c_str());
-            LogPrintf("genesis.hashMerkleRoot = %s\n", BlockMerkleRoot(genesis).ToString().c_str());
+            printf("genesis.hashMerkleRoot = %s\n", BlockMerkleRoot(genesis).ToString().c_str());
         }
 
 
 
         consensus.hashGenesisBlock = genesis.GetHash();
-        assert(consensus.hashGenesisBlock == uint256S("0x00"));
-        assert(genesis.hashMerkleRoot == uint256S("0x00"));
+        assert(consensus.hashGenesisBlock == uint256S("0x00000eeb06f8d3feaa75c5aeded89d4788e08d692e970afff93e92afeaae74e5"));
+        assert(genesis.hashMerkleRoot == uint256S("0x49a121baf82cb59ad2168827920f5a68f0c324844c26f56fedb0361a499521ea"));
 
         //vSeeds.push_back(CDNSSeedData("bitcoin.sipa.be", "seed.bitcoin.sipa.be")); // Pieter Wuille
 
