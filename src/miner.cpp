@@ -29,6 +29,7 @@
 #include <boost/tuple/tuple.hpp>
 #include <queue>
 
+
 using namespace std;
 
 //////////////////////////////////////////////////////////////////////////////
@@ -319,7 +320,7 @@ void IncrementExtraNonce(CBlock* pblock, const CBlockIndex* pindexPrev, unsigned
 
 //////////////////////////////////////////////////////////////////////////////
 //
-// Internal miner
+// Internal miner (NOT USED)
 //
 
 //
@@ -328,7 +329,7 @@ void IncrementExtraNonce(CBlock* pblock, const CBlockIndex* pindexPrev, unsigned
 // nonce is 0xffff0000 or above, the block is rebuilt and nNonce starts over at
 // zero.
 //
-bool static ScanHash(const CBlockHeader *pblock, uint32_t& nNonce, uint256 *phash)
+/*bool static ScanHash(const CBlockHeader *pblock, uint32_t& nNonce, uint256 *phash)
 {
     // Write the first 76 bytes of the block header to a double-SHA256 state.
     CHash256 hasher;
@@ -353,7 +354,7 @@ bool static ScanHash(const CBlockHeader *pblock, uint32_t& nNonce, uint256 *phas
         if ((nNonce & 0xfff) == 0)
             return false;
     }
-}
+}*/
 
 static bool ProcessBlockFound(const CBlock* pblock, const CChainParams& chainparams)
 {
@@ -430,7 +431,7 @@ void static BitcoinMiner(const CChainParams& chainparams)
             LogPrintf("Running BitcoinMiner with %u transactions in block (%u bytes)\n", pblock->vtx.size(),
                 ::GetSerializeSize(*pblock, SER_NETWORK, PROTOCOL_VERSION));
 
-            //
+/*            //
             // Search
             //
             int64_t nStart = GetTime();
@@ -460,14 +461,51 @@ void static BitcoinMiner(const CChainParams& chainparams)
 
                         break;
                     }
+                }*/
+
+
+            //
+            // Search (Code from Dash v0.12.2), without using ScanHash
+            //
+            int64_t nStart = GetTime();
+            arith_uint256 hashTarget = arith_uint256().SetCompact(pblock->nBits);
+            //LogPrintf("Reached outside loop\n"); // DEBUG
+            while (true)
+            {
+                unsigned int nHashesDone = 0;
+                uint256 hash;
+                while (true)
+                {
+                    hash = pblock->GetHash();
+                    if (UintToArith256(hash) <= hashTarget)
+                    {
+                        // Found a solution
+                        SetThreadPriority(THREAD_PRIORITY_NORMAL);
+                        LogPrintf("BitcoinMiner:\n  proof-of-work found\n  hash: %s\n  target: %s\n", hash.GetHex(), hashTarget.GetHex());
+                        ProcessBlockFound(pblock, chainparams);
+                        SetThreadPriority(THREAD_PRIORITY_LOWEST);
+                        coinbaseScript->KeepScript();
+
+                        // In regression test mode, stop mining after a block is found. This
+                        // allows developers to controllably generate a block on demand.
+                        if (chainparams.MineBlocksOnDemand())
+                            throw boost::thread_interrupted();
+
+                        break;
+                    }
+                    pblock->nNonce += 1;
+                    nHashesDone += 1;
+                    if ((pblock->nNonce & 0xFF) == 0)
+                        break;
                 }
+
 
                 // Check for stop or if block needs to be rebuilt
                 boost::this_thread::interruption_point();
                 // Regtest mode doesn't require peers
                 if (vNodes.empty() && chainparams.MiningRequiresPeers())
                     break;
-                if (nNonce >= 0xffff0000)
+                if (pblock->nNonce >= 0xffff0000) // modified
                     break;
                 if (mempool.GetTransactionsUpdated() != nTransactionsUpdatedLast && GetTime() - nStart > 60)
                     break;
